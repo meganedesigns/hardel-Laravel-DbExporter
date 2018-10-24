@@ -7,15 +7,11 @@
 
 namespace Hardel\Exporter\Commands;
 
-
-use Hardel\Exporter\AbstractAction;
-
 class MigrationsCommand extends ExporterCommand
 {
     protected $signature = 'dbexp:migration {database?} {--ignore=} {--select=}';
 
     protected $description = 'export your table structur from database to a migration';
-
 
     public function handle()
     {
@@ -36,13 +32,11 @@ class MigrationsCommand extends ExporterCommand
         if (empty($ignore) and empty($selected)) {
             $this->expManager->migrate($database);
         } else {
-            if(!empty($ignore) and empty($selected)) {
-                $this->makeAction(compact('ignore'),"migrate",$this->argument('database'));
-            }
-            else if(empty($ignore) and !empty($selected)) {
-               $this->makeAction(compact('selected'),'migrate',$this->argument('database'));
-            }
-            else {
+            if (!empty($ignore) and empty($selected)) {
+                $this->makeAction(compact('ignore'), "migrate", $this->argument('database'));
+            } else if (empty($ignore) and !empty($selected)) {
+                $this->makeAction(compact('selected'), 'migrate', $this->argument('database'));
+            } else {
                 $this->error("it is not possible pass selected table and ignored table together");
             }
         }

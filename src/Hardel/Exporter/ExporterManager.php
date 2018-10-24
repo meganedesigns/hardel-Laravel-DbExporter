@@ -9,7 +9,6 @@ namespace Hardel\Exporter;
 
 use Hardel\Exporter\DriverExporter\DriverExporter;
 use Illuminate\Container\Container;
-use Closure;
 
 class ExporterManager
 {
@@ -33,7 +32,7 @@ class ExporterManager
      * @param Container $container
      * @param ExporterFactory $factory
      */
-    public function __construct(Container $container,ExporterFactory $factory)
+    public function __construct(Container $container, ExporterFactory $factory)
     {
         $this->app = $container;
 
@@ -42,18 +41,14 @@ class ExporterManager
         $this->exporter = $this->registerExporter();
     }
 
-
     private function registerExporter()
     {
         $connType = $this->app['config']['database.default'];
-        $key = 'customAction.customs.'.$connType;
-        if(isset($this->app['config'][$key]))
-        {
+        $key      = 'customAction.customs.' . $connType;
+        if (isset($this->app['config'][$key])) {
             $closure = $this->app['config'][$key];
-            return $this->factory->make($this->getConfigDefault(),$closure);
-        }
-        else
-        {
+            return $this->factory->make($this->getConfigDefault(), $closure);
+        } else {
             return $this->factory->make($this->getConfigDefault());
         }
     }
@@ -63,16 +58,17 @@ class ExporterManager
      * @param null $custom
      * @return $this
      */
-    public function migrate($database = null,$custom = null)
+    public function migrate($database = null, $custom = null)
     {
-        if(is_null($custom))
+        if (is_null($custom)) {
             $this->exporter->migrator()->convert($database)->write();
-        else {
+        } else {
             $exporter = $this->exporter->migrationCustom($custom);
-            if(isset($this->app['config']['dbexporter.exportPath.'.$custom.'.migration']))
-            {
-                if($exporter->isEmptyStorePath())
-                    $exporter = $exporter->setStorePath($this->app['config']['dbexporter.exportPath.' . $custom.'.migration']);
+            if (isset($this->app['config']['dbexporter.exportPath.' . $custom . '.migration'])) {
+                if ($exporter->isEmptyStorePath()) {
+                    $exporter = $exporter->setStorePath($this->app['config']['dbexporter.exportPath.' . $custom . '.migration']);
+                }
+
             }
             $exporter->convert($database)->write();
         }
@@ -84,16 +80,18 @@ class ExporterManager
      * @param null $custom
      * @return $this
      */
-    public function seed($database = null,$custom = null)
+    public function seed($database = null, $custom = null)
     {
-        if(is_null($custom))
+        if (is_null($custom)) {
             $this->exporter->seeder()->convert($database)->write();
-        else {
+        } else {
 
             $exporter = $this->exporter->seederCustom($custom);
-            if(isset($this->app['config']['dbexporter.exportPath.'.$custom.'.seed'])) {
-                if($exporter->isEmptyStorePath())
-                    $exporter = $exporter->setStorePath($this->app['config']['dbexporter.exportPath.' . $custom.'.seed']);
+            if (isset($this->app['config']['dbexporter.exportPath.' . $custom . '.seed'])) {
+                if ($exporter->isEmptyStorePath()) {
+                    $exporter = $exporter->setStorePath($this->app['config']['dbexporter.exportPath.' . $custom . '.seed']);
+                }
+
             }
             $exporter->convert($database)->write();
 
@@ -109,7 +107,7 @@ class ExporterManager
      */
     public function migrateAndSeed($database = null, $custom = null)
     {
-        $this->migrate($database,$custom)->seed($database,$custom);
+        $this->migrate($database, $custom)->seed($database, $custom);
 
         return $this;
     }
@@ -119,12 +117,13 @@ class ExporterManager
      * @param $custom null
      * @return $this
      */
-    public function setSeederPath($path,$custom = null)
+    public function setSeederPath($path, $custom = null)
     {
-        if(is_null($custom))
+        if (is_null($custom)) {
             $this->exporter->seeder()->setStorePath($path);
-        else
+        } else {
             $this->exporter->seederCustom($custom)->setStorePath($path);
+        }
 
         return $this;
     }
@@ -134,12 +133,13 @@ class ExporterManager
      * @param null $custom
      * @return $this
      */
-    public function setMigratorPath($path,$custom = null)
+    public function setMigratorPath($path, $custom = null)
     {
-        if(is_null($custom))
+        if (is_null($custom)) {
             $this->exporter->migrator()->setStorePath($path);
-        else
+        } else {
             $this->exporter->seederCustom($custom)->setStorePath($path);
+        }
 
         return $this;
     }
@@ -178,10 +178,18 @@ class ExporterManager
         return $this->exporter->migrator()->filePath;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getSeedsFilePath()
+    {
+        return $this->exporter->seeder()->filePath;
+    }
+
     public function getDatabaseName()
     {
         $connType = config('database.default');
-        $database = config('database.connections.' .$connType );
+        $database = config('database.connections.' . $connType);
 
         return $database['database'];
     }
