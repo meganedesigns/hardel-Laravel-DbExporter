@@ -139,9 +139,6 @@ class PostgresSeeder extends PostgresAction
             $temp_val = ($value ? '1' : '0');
             return "                '{$prop}' => {$temp_val},\n";
         } else if (strlen($value) == 0 or is_null($value)) {
-            // echo "prop: " . $prop . PHP_EOL;
-            // echo "value: " . PHP_EOL . var_dump($value);
-            // echo "dataType: " . PHP_EOL . var_dump($dataType) . PHP_EOL;
             return "                '{$prop}' => NULL,\n";
         } else {
             $prop = addslashes($prop);
