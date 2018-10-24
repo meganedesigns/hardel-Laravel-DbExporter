@@ -33,8 +33,8 @@ class PostgresSeeder extends PostgresAction
         if (!$this->customDb) {
             $this->convert();
         }
-
-        $seed           = $this->compile();
+        echo PHP_EOL . "****** START DUMP ******" . PHP_EOL;
+        echo $seed      = $this->compile();
         $filename       = Str::camel($this->database) . "TableSeeder";
         $this->filePath = config('dbexporter.exportPath.seeds') . "{$filename}.php";
 
@@ -149,8 +149,10 @@ class PostgresSeeder extends PostgresAction
             $stringa = '';
 
             if ($prop == 'codiceEAN');
+            if (strpos($dataType, 'int') === 0) {
+                $dataType = 'int';
+            }
             switch ($dataType) {
-                case 'int4':
                 case 'int':
                 case 'integer':
                 case 'smallint':
